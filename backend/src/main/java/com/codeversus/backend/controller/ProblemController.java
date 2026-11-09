@@ -1,5 +1,6 @@
 package com.codeversus.backend.controller;
 
+import com.codeversus.backend.dto.ProblemResponse;
 import java.util.List;
 
 import org.springframework.web.bind.annotation.GetMapping;
@@ -9,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.codeversus.backend.enums.Difficulty;
-import com.codeversus.backend.model.Problem;
 import com.codeversus.backend.service.ProblemService;
 
 @RestController
@@ -17,6 +17,7 @@ import com.codeversus.backend.service.ProblemService;
 
 public class ProblemController {
 	
+	private ProblemResponse problemResponse;
 	private final ProblemService problemService;
 
 	public ProblemController(ProblemService problemService) {
@@ -24,13 +25,15 @@ public class ProblemController {
 	}
 	
 	@GetMapping("/problems")
-	public List<Problem> getProblemsbyDifficulty(@RequestParam(required = false) Difficulty difficulty){
-		return problemService.getProblems(difficulty);
+	public List<ProblemResponse> getProblemsbyDifficulty(@RequestParam(required = false) Difficulty difficulty){
+		return (problemService.getProblems(difficulty)).stream()
+				.map(ProblemResponse::from)
+				.toList();
 	}
 	
 	@GetMapping("/problems/{id}")
-	public Problem getProblemById(@PathVariable Long id) {
-		return problemService.getProblemById(id);
+	public ProblemResponse getProblemById(@PathVariable Long id) {
+		return problemResponse.from(problemService.getProblemById(id));
 	}
 	
 
